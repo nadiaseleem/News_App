@@ -2,6 +2,7 @@ package com.example.news.ui.util
 
 import android.app.Activity
 import android.content.DialogInterface
+import android.content.Intent
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 
@@ -34,3 +35,12 @@ fun Activity.showAlertDialog(
     alertDialogBuilder.setNegativeButton(negActionName, negAction)
     return alertDialogBuilder.show()
 }
+
+fun Fragment.recreateActivity() {
+    activity?.let {
+        val intent = Intent(it, it::class.java)
+        it.startActivity(intent)
+        it.finish()
+    }
+}
+

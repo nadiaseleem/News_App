@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">الأخبار</string>
+    <string name="action_settings">الإعدادات</string>
+    <string name="menu_categories">المواضيع</string>
+    <string name="menu_settings">الإعدادات</string>
+    <string name="pick_category">اختر الموضوع الذي يهمك معرفة آخر أخباره</string>
+    <string name="language">اللغة</string>
+</resources>
