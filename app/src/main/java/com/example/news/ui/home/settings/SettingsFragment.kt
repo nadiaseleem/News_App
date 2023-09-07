@@ -10,9 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.news.R
 import com.example.news.databinding.FragmentSettingsBinding
-import com.example.news.ui.util.LocaleManager
-import com.example.news.ui.util.getCurrentLanguage
-import com.example.news.ui.util.recreateActivity
+import com.example.news.util.LocaleManager
+import com.example.news.util.getCurrentLanguage
+import com.example.news.util.recreateActivity
 
 class SettingsFragment : Fragment() {
 

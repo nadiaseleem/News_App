@@ -13,6 +13,15 @@
     <string name="search" translatable="false">Search\n</string>
     <string name="pick_category">Pick your category\nof interest</string>
     <string name="language">Language</string>
+    <string name="view_full_article">View Full Article</string>
+    <string name="articles_not_found">This source doesn\'t have\n any news currently</string>
+    <string name="sports">Sports</string>
+    <string name="technology">Technology</string>
+    <string name="health">Health</string>
+    <string name="business">Business</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="science">Science</string>
+
     <string-array name="languages">
         <item>English</item>
         <item>Arabic</item>

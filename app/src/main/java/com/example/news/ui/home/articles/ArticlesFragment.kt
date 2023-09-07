@@ -10,15 +10,16 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.example.news.R
+import com.example.news.api.ApiManager
+import com.example.news.api.articlesModel.Article
+import com.example.news.api.articlesModel.ArticlesResponse
+import com.example.news.api.sourcesModel.Source
+import com.example.news.api.sourcesModel.SourcesResponse
 import com.example.news.databinding.FragmentArticlesBinding
-import com.example.news.ui.api.ApiManager
-import com.example.news.ui.api.articlesModel.Article
-import com.example.news.ui.api.articlesModel.ArticlesResponse
-import com.example.news.ui.api.sourcesModel.Source
-import com.example.news.ui.api.sourcesModel.SourcesResponse
 import com.example.news.ui.home.MainActivity
-import com.example.news.ui.util.Constants
-import com.example.news.ui.util.showAlertDialog
+import com.example.news.ui.home.articleDetails.ArticleDetailsFragment
+import com.example.news.util.Constants
+import com.example.news.util.showAlertDialog
 import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import retrofit2.Call
@@ -53,6 +54,15 @@ class ArticlesFragment : Fragment() {
     private fun initRecyclerView() {
 
         binding.articlesRv.adapter = adapter
+        adapter.onArticleClick = { article: Article ->
+            val bundle = Bundle()
+            bundle
+                .putParcelable(Constants.ARTICLE, article)
+            val fragment = ArticleDetailsFragment()
+            fragment.arguments = bundle
+            parentFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
+                .addToBackStack("").commit()
+        }
     }
 
     private fun getArticles(source: String) {
@@ -69,7 +79,10 @@ class ArticlesFragment : Fragment() {
                     if (response.isSuccessful) {
                         articles = response.body()?.articles as List<Article>
                         adapter.updateArticles(articles)
-
+                        if (articles.isEmpty())
+                            binding.llNotFound.visibility = View.VISIBLE
+                        else
+                            binding.llNotFound.visibility = View.GONE
 
                     } else {
                         val jsonString = response.errorBody()?.string()

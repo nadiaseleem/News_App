@@ -14,7 +14,7 @@ import com.example.news.R
 import com.example.news.databinding.FragmentCategoriesBinding
 import com.example.news.ui.home.MainActivity
 import com.example.news.ui.home.articles.ArticlesFragment
-import com.example.news.ui.util.Constants
+import com.example.news.util.Constants
 
 
 class CategoriesFragment : Fragment(), View.OnClickListener {

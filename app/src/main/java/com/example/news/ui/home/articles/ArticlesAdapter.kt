@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.news.R
+import com.example.news.api.articlesModel.Article
 import com.example.news.databinding.ItemArticleBinding
-import com.example.news.ui.api.articlesModel.Article
 
 class ArticlesAdapter(var articles: List<Article>? = null) :
     RecyclerView.Adapter<ArticlesAdapter.ViewHolder>() {
@@ -33,6 +33,12 @@ class ArticlesAdapter(var articles: List<Article>? = null) :
                 .placeholder(R.drawable.loading_spinner)
                 .into(holder.binding.articleImg)
 
+            if (onArticleClick != null) {
+                holder.itemView.setOnClickListener {
+                    onArticleClick?.invoke(article)
+                }
+            }
+
         }
     }
 
@@ -40,4 +46,6 @@ class ArticlesAdapter(var articles: List<Article>? = null) :
         this.articles = articles
         notifyDataSetChanged()
     }
+
+    var onArticleClick: ((article: Article) -> Unit)? = null
 }
