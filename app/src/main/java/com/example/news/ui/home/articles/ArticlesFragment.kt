@@ -12,11 +12,14 @@ import androidx.fragment.app.Fragment
 import com.example.news.R
 import com.example.news.databinding.FragmentArticlesBinding
 import com.example.news.ui.api.ApiManager
-import com.example.news.ui.api.model.Source
-import com.example.news.ui.api.model.SourcesResponse
+import com.example.news.ui.api.articlesModel.Article
+import com.example.news.ui.api.articlesModel.ArticlesResponse
+import com.example.news.ui.api.sourcesModel.Source
+import com.example.news.ui.api.sourcesModel.SourcesResponse
 import com.example.news.ui.home.MainActivity
 import com.example.news.ui.util.Constants
 import com.example.news.ui.util.showAlertDialog
+import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
@@ -26,6 +29,8 @@ import retrofit2.Response
 class ArticlesFragment : Fragment() {
 
     private lateinit var binding: FragmentArticlesBinding
+    private var articles = listOf<Article>()
+    private val adapter = ArticlesAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,10 +47,72 @@ class ArticlesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val category = arguments?.getString(Constants.CATEGORY).toString()
         getSources(category)
+        initRecyclerView()
+    }
 
+    private fun initRecyclerView() {
+
+        binding.articlesRv.adapter = adapter
+    }
+
+    private fun getArticles(source: String) {
+        binding.progressBar.isVisible = true
+
+        ApiManager
+            .getApis().getArticles(source = source)
+            .enqueue(object : Callback<ArticlesResponse> {
+                override fun onResponse(
+                    call: Call<ArticlesResponse>,
+                    response: Response<ArticlesResponse>
+                ) {
+                    binding.progressBar.isVisible = false
+                    if (response.isSuccessful) {
+                        articles = response.body()?.articles as List<Article>
+                        adapter.updateArticles(articles)
+
+
+                    } else {
+                        val jsonString = response.errorBody()?.string()
+                        val response = Gson().fromJson(jsonString, ArticlesResponse::class.java)
+
+                        handleError(response.message) {
+                            getArticles(source)
+                        }
+                    }
+
+                }
+
+                override fun onFailure(call: Call<ArticlesResponse>, t: Throwable) {
+                    binding.progressBar.isVisible = false
+                    handleError(t.localizedMessage) {
+                        getArticles(source)
+                    }
+
+                }
+
+            })
+    }
+
+    fun interface OnTryAgainClickListener {
+        fun onTryAgainClick()
+    }
+
+    private fun handleError(message: String? = null, onClickListener: OnTryAgainClickListener) {
+        showAlertDialog(message
+            ?: "something went wrong",
+            posActionName = "try again",
+            posAction = { dialog, which ->
+                dialog.dismiss()
+                onClickListener.onTryAgainClick()
+            },
+            negActionName = "cancel",
+            negAction = { dialog, which ->
+                dialog.dismiss()
+            })
     }
 
     private fun getSources(category: String) {
+        binding.progressBar.isVisible = true
         ApiManager.getApis().getSources(category = category)
             .enqueue(object : Callback<SourcesResponse> {
                 override fun onResponse(
@@ -60,34 +127,18 @@ class ArticlesFragment : Fragment() {
                         val jsonString = response.errorBody()?.string()
                         val response = Gson().fromJson(jsonString, SourcesResponse::class.java)
 
-                        showAlertDialog(response.message
-                            ?: "something went wrong",
-                            posActionName = "try again",
-                            posAction = { dialog, which ->
-                                dialog.dismiss()
-                                getSources(category)
-                            },
-                            negActionName = "cancel",
-                            negAction = { dialog, which ->
-                                dialog.dismiss()
-                            })
+                        handleError(response.message) {
+                            getSources(category)
+                        }
                     }
 
                 }
 
                 override fun onFailure(call: Call<SourcesResponse>, t: Throwable) {
                     binding.progressBar.isVisible = false
-                    showAlertDialog(t.localizedMessage
-                        ?: "something went wrong",
-                        posActionName = "try again",
-                        posAction = { dialog, which ->
-                            dialog.dismiss()
-                            getSources(category)
-                        },
-                        negActionName = "cancel",
-                        negAction = { dialog, which ->
-                            dialog.dismiss()
-                        })
+                    handleError(t.localizedMessage) {
+                        getSources(category)
+                    }
                 }
 
             })
@@ -99,8 +150,23 @@ class ArticlesFragment : Fragment() {
         sources.forEach { source ->
             val tab = binding.tabLayout.newTab()
             tab.text = source?.name
+            tab.tag = source?.id
             binding.tabLayout.addTab(tab)
         }
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                getArticles(tab?.tag.toString())
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                getArticles(tab?.tag.toString())
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                getArticles(tab?.tag.toString())
+            }
+        })
+        binding.tabLayout.getTabAt(0)?.select()
 
 
     }
