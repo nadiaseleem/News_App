@@ -228,15 +228,6 @@ class ArticlesFragment : Fragment() {
     }
 
 
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when (item.itemId) {
-//            android.R.id.search -> {
-//                // Handle the search click here
-//                return true
-//            }
-//            else -> return super.onOptionsItemSelected(item)
-//        }
-//    }
 
 
 }

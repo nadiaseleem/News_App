@@ -5,12 +5,15 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.GravityCompat
-import com.example.news.R
 import com.example.news.databinding.ActivityMainBinding
 import com.example.news.ui.home.categories.CategoriesFragment
+import com.example.news.ui.home.search.SearchFragment
 import com.example.news.ui.home.settings.SettingsFragment
+import com.example.news.util.Constants
 import com.google.android.material.navigation.NavigationView
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -30,7 +33,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().replace(
-                R.id.fragment_container,
+                com.example.news.R.id.fragment_container,
                 CategoriesFragment()
             ).commit()
         }
@@ -41,8 +44,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             this,
             binding.drawerLayout,
             binding.appBarMain.toolbar,
-            R.string.navigation_drawer_open,
-            R.string.navigation_drawer_close
+            com.example.news.R.string.navigation_drawer_open,
+            com.example.news.R.string.navigation_drawer_close
         )
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
@@ -50,8 +53,39 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main, menu)
+        menuInflater.inflate(com.example.news.R.menu.main, menu)
+        val searchItem = menu.findItem(com.example.news.R.id.action_search)
+        val searchView = searchItem.actionView as SearchView?
+
+        // Configure the searchView, such as adding a listener to handle search queries
+
+        // Configure the searchView, such as adding a listener to handle search queries
+        searchView!!.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                // Handle search query submission here
+                // Navigate to your Search Fragment and pass the query
+                navigateToSearchFragment(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                // Handle query text changes here (if needed)
+                return true
+            }
+        })
         return true
+    }
+
+    private fun navigateToSearchFragment(query: String) {
+        val searchFragment = SearchFragment()
+        val bundle = Bundle()
+        bundle.putString(Constants.QUERY, query)
+        searchFragment.arguments = bundle
+        supportFragmentManager
+            .beginTransaction()
+            .replace(com.example.news.R.id.fragment_container, searchFragment)
+            .addToBackStack(null) // Optional: Add to back stack if needed
+            .commit()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -73,17 +107,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
         when (item.itemId) {
-            R.id.nav_categories -> {
+            com.example.news.R.id.nav_categories -> {
                 supportFragmentManager.beginTransaction().replace(
-                    R.id.fragment_container,
+                    com.example.news.R.id.fragment_container,
                     CategoriesFragment()
                 ).addToBackStack("").commit()
 
             }
 
-            R.id.nav_settings -> {
+            com.example.news.R.id.nav_settings -> {
                 supportFragmentManager.beginTransaction().replace(
-                    R.id.fragment_container,
+                    com.example.news.R.id.fragment_container,
                     SettingsFragment()
                 ).addToBackStack("").commit()
             }

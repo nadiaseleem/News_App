@@ -14,5 +14,6 @@
     <string name="business">إدارة الأعمال</string>
     <string name="entertainment">الترفيه</string>
     <string name="science">العلوم</string>
+    <string name="search_not_found">نعتذر لم نجد أي أخبار بكلمات البحث  </string>
 
 </resources>

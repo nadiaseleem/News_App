@@ -16,6 +16,7 @@ interface WebServices {
     @GET("/v2/everything")
     fun getArticles(
         @Query("apiKey") apiKey: String = ApiConstants.API_KEY,
-        @Query("sources") source: String
+        @Query("q") searchKeyWord: String? = null,
+        @Query("sources") source: String? = null
     ): Call<ArticlesResponse>
 }
