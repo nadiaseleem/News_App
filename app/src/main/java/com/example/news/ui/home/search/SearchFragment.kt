@@ -18,8 +18,8 @@ import com.example.news.databinding.FragmentSearchBinding
 import com.example.news.ui.home.MainActivity
 import com.example.news.ui.home.articleDetails.ArticleDetailsFragment
 import com.example.news.ui.home.articles.ArticlesAdapter
-import com.example.news.ui.home.articles.ArticlesFragment
 import com.example.news.util.Constants
+import com.example.news.util.OnTryAgainClickListener
 import com.example.news.util.showAlertDialog
 import com.google.gson.Gson
 import retrofit2.Call
@@ -155,7 +155,7 @@ class SearchFragment : Fragment() {
 
     private fun handleError(
         message: String? = null,
-        onClickListener: ArticlesFragment.OnTryAgainClickListener
+        onClickListener: OnTryAgainClickListener
     ) {
         showAlertDialog(message
             ?: "something went wrong",

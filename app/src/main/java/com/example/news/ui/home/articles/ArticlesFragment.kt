@@ -7,31 +7,30 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.news.R
-import com.example.news.api.ApiManager
 import com.example.news.api.articlesModel.Article
-import com.example.news.api.articlesModel.ArticlesResponse
 import com.example.news.api.sourcesModel.Source
-import com.example.news.api.sourcesModel.SourcesResponse
 import com.example.news.databinding.FragmentArticlesBinding
 import com.example.news.ui.home.MainActivity
 import com.example.news.ui.home.articleDetails.ArticleDetailsFragment
 import com.example.news.util.Constants
+import com.example.news.util.OnTryAgainClickListener
 import com.example.news.util.showAlertDialog
 import com.google.android.material.tabs.TabLayout
-import com.google.gson.Gson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 
 class ArticlesFragment : Fragment() {
 
     private lateinit var binding: FragmentArticlesBinding
-    private var articles = listOf<Article>()
     private val adapter = ArticlesAdapter()
+    private lateinit var viewModel: ArticlesViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(this)[ArticlesViewModel::class.java]
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,9 +45,29 @@ class ArticlesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.vm = viewModel
+        binding.lifecycleOwner = this
+
         val category = arguments?.getString(Constants.CATEGORY).toString()
-        getSources(category)
+        viewModel.getSources(category)
         initRecyclerView()
+        initObservers()
+    }
+
+    private fun initObservers() {
+        viewModel.errorLiveData.observe(viewLifecycleOwner) { viewError ->
+            handleError(viewError.message) {
+                viewError.onTryAgainClickListener
+            }
+        }
+        viewModel.articlesList.observe(viewLifecycleOwner) { articles ->
+            adapter.updateArticles(articles as List<Article>)
+        }
+
+        viewModel.sourcesList.observe(viewLifecycleOwner) { sources ->
+            bindTabs(sources)
+        }
+
     }
 
     private fun initRecyclerView() {
@@ -65,51 +84,6 @@ class ArticlesFragment : Fragment() {
         }
     }
 
-    private fun getArticles(source: String) {
-        binding.progressBar.isVisible = true
-
-        ApiManager
-            .getApis().getArticles(source = source)
-            .enqueue(object : Callback<ArticlesResponse> {
-                override fun onResponse(
-                    call: Call<ArticlesResponse>,
-                    response: Response<ArticlesResponse>
-                ) {
-                    binding.progressBar.isVisible = false
-                    if (response.isSuccessful) {
-                        articles = response.body()?.articles as List<Article>
-                        adapter.updateArticles(articles)
-                        if (articles.isEmpty())
-                            binding.llNotFound.visibility = View.VISIBLE
-                        else
-                            binding.llNotFound.visibility = View.GONE
-
-                    } else {
-                        val jsonString = response.errorBody()?.string()
-                        val response = Gson().fromJson(jsonString, ArticlesResponse::class.java)
-
-                        handleError(response.message) {
-                            getArticles(source)
-                        }
-                    }
-
-                }
-
-                override fun onFailure(call: Call<ArticlesResponse>, t: Throwable) {
-                    binding.progressBar.isVisible = false
-                    handleError(t.localizedMessage) {
-                        getArticles(source)
-                    }
-
-                }
-
-            })
-    }
-
-    fun interface OnTryAgainClickListener {
-        fun onTryAgainClick()
-    }
-
     private fun handleError(message: String? = null, onClickListener: OnTryAgainClickListener) {
         showAlertDialog(message
             ?: "something went wrong",
@@ -124,38 +98,6 @@ class ArticlesFragment : Fragment() {
             })
     }
 
-    private fun getSources(category: String) {
-        binding.progressBar.isVisible = true
-        ApiManager.getApis().getSources(category = category)
-            .enqueue(object : Callback<SourcesResponse> {
-                override fun onResponse(
-                    call: Call<SourcesResponse>,
-                    response: Response<SourcesResponse>
-                ) {
-                    binding.progressBar.isVisible = false
-                    if (response.isSuccessful) {
-                        bindTabs(response.body()?.sources)
-
-                    } else {
-                        val jsonString = response.errorBody()?.string()
-                        val response = Gson().fromJson(jsonString, SourcesResponse::class.java)
-
-                        handleError(response.message) {
-                            getSources(category)
-                        }
-                    }
-
-                }
-
-                override fun onFailure(call: Call<SourcesResponse>, t: Throwable) {
-                    binding.progressBar.isVisible = false
-                    handleError(t.localizedMessage) {
-                        getSources(category)
-                    }
-                }
-
-            })
-    }
 
     private fun bindTabs(sources: List<Source?>?) {
         if (sources == null)
@@ -168,15 +110,15 @@ class ArticlesFragment : Fragment() {
         }
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                getArticles(tab?.tag.toString())
+                viewModel.getArticles(tab?.tag.toString())
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
-                getArticles(tab?.tag.toString())
+                viewModel.getArticles(tab?.tag.toString())
             }
 
             override fun onTabReselected(tab: TabLayout.Tab?) {
-                getArticles(tab?.tag.toString())
+                viewModel.getArticles(tab?.tag.toString())
             }
         })
         binding.tabLayout.getTabAt(0)?.select()
