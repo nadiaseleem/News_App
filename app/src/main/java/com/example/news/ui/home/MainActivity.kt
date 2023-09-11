@@ -57,6 +57,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val searchItem = menu.findItem(com.example.news.R.id.action_search)
         val searchView = searchItem.actionView as SearchView?
 
+        searchItem.setOnMenuItemClickListener {
+            navigateToSearchFragment()
+            true
+        }
+
+
         // Configure the searchView, such as adding a listener to handle search queries
 
         // Configure the searchView, such as adding a listener to handle search queries
@@ -76,16 +82,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    private fun navigateToSearchFragment(query: String) {
+    private fun navigateToSearchFragment(query: String? = null) {
         val searchFragment = SearchFragment()
         val bundle = Bundle()
         bundle.putString(Constants.QUERY, query)
         searchFragment.arguments = bundle
-        supportFragmentManager
-            .beginTransaction()
-            .replace(com.example.news.R.id.fragment_container, searchFragment)
-            .addToBackStack(null) // Optional: Add to back stack if needed
-            .commit()
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        fragmentTransaction.replace(com.example.news.R.id.fragment_container, searchFragment)
+        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.commit()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
