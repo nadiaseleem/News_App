@@ -53,7 +53,7 @@ class SearchFragment : Fragment() {
     private fun initObservers() {
         viewModel.articlesLiveData.observe(viewLifecycleOwner) { articles ->
             adapter.updateArticles(articles as List<Article>)
-            if (articles?.isEmpty() == true)
+            if (articles.isEmpty())
                 binding.llNotFound.visibility = View.VISIBLE
             else
                 binding.llNotFound.visibility = View.GONE
