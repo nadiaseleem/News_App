@@ -10,7 +10,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
 import com.example.news.R
 import com.example.news.api.articlesModel.Article
 import com.example.news.databinding.FragmentArticleDetailsBinding
@@ -22,6 +21,7 @@ import com.example.news.util.parcelable
 class ArticleDetailsFragment : Fragment() {
     private lateinit var binding: FragmentArticleDetailsBinding
     private var article: Article? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,8 +35,8 @@ class ArticleDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        article = arguments?.parcelable<Article>(Constants.ARTICLE)
-
+        article = arguments?.parcelable(Constants.ARTICLE)
+        binding.article = article
         onReadMoreClick()
     }
 
@@ -49,28 +49,16 @@ class ArticleDetailsFragment : Fragment() {
         }
     }
 
-    private fun initViews(article: Article) {
-        binding.articleTitle.text = article.title
-        binding.articleContent.text = article.content
-        Glide.with(requireContext()).load(article.urlToImage)
-            .placeholder(R.drawable.loading_spinner).centerCrop().into(binding.articleImg)
-    }
 
 
     override fun onResume() {
         super.onResume()
         article?.title?.let { setCustomToolbarTitle(it) }
         enableBackArrowButton()
-        article?.let { initViews(it) }
-
 
     }
 
 
-    override fun onPause() {
-        super.onPause()
-        disableBackArrowButton()
-    }
 
 
     private fun enableBackArrowButton() {
@@ -83,12 +71,6 @@ class ArticleDetailsFragment : Fragment() {
         toolbar.setNavigationOnClickListener {
             requireActivity().onBackPressed()
         }
-    }
-
-    private fun disableBackArrowButton() {
-        val activity = requireActivity() as MainActivity
-        activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        activity.supportActionBar?.setDisplayShowHomeEnabled(false)
     }
 
 

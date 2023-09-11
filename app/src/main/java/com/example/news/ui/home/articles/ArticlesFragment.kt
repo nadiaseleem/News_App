@@ -17,6 +17,7 @@ import com.example.news.ui.home.MainActivity
 import com.example.news.ui.home.articleDetails.ArticleDetailsFragment
 import com.example.news.util.Constants
 import com.example.news.util.OnTryAgainClickListener
+import com.example.news.util.TabPreferences
 import com.example.news.util.showAlertDialog
 import com.google.android.material.tabs.TabLayout
 
@@ -26,6 +27,7 @@ class ArticlesFragment : Fragment() {
     private lateinit var binding: FragmentArticlesBinding
     private val adapter = ArticlesAdapter()
     private lateinit var viewModel: ArticlesViewModel
+    private lateinit var tabPreferences: TabPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +42,8 @@ class ArticlesFragment : Fragment() {
 
         binding = FragmentArticlesBinding.inflate(inflater, container, false)
 
+        tabPreferences = TabPreferences(requireContext())
+
         return binding.root
     }
 
@@ -52,6 +56,12 @@ class ArticlesFragment : Fragment() {
         viewModel.getSources(category)
         initRecyclerView()
         initObservers()
+    }
+
+    private fun setSelectedTabFromSharedPrefrences() {
+        val selectedTab = tabPreferences.getSelectedTab()
+        binding.tabLayout.getTabAt(selectedTab)?.select()
+
     }
 
     private fun initObservers() {
@@ -108,8 +118,13 @@ class ArticlesFragment : Fragment() {
             tab.tag = source?.id
             binding.tabLayout.addTab(tab)
         }
+
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
+                tab?.position?.let {
+                    tabPreferences.saveSelectedTab(it)
+                }
+
                 viewModel.getArticles(tab?.tag.toString())
             }
 
@@ -121,7 +136,8 @@ class ArticlesFragment : Fragment() {
                 viewModel.getArticles(tab?.tag.toString())
             }
         })
-        binding.tabLayout.getTabAt(0)?.select()
+
+        setSelectedTabFromSharedPrefrences()
 
 
     }
@@ -130,7 +146,7 @@ class ArticlesFragment : Fragment() {
         super.onResume()
         setCustomToolbarTitle(arguments?.getString(Constants.CATEGORY).toString())
         enableBackArrowButton()
-
+        setSelectedTabFromSharedPrefrences()
     }
 
 

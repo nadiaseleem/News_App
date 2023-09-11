@@ -72,8 +72,6 @@ class ArticlesViewModel : ViewModel() {
                     shouldLoad.postValue(false)
                     if (response.isSuccessful) {
                         sourcesList.postValue(response.body()?.sources)
-//                        bindTabs()
-
                     } else {
                         val jsonString = response.errorBody()?.string()
                         val response = Gson().fromJson(jsonString, SourcesResponse::class.java)
