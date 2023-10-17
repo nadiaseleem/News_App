@@ -1,4 +1,4 @@
-package com.example.news.ui.home.articles
+package com.example.news.ui.home.news
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,8 +10,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.news.R
-import com.example.news.api.articlesModel.Article
-import com.example.news.api.sourcesModel.Source
+import com.example.news.data.api.articlesModel.Article
+import com.example.news.data.api.sourcesModel.Source
 import com.example.news.databinding.FragmentArticlesBinding
 import com.example.news.ui.home.MainActivity
 import com.example.news.ui.home.articleDetails.ArticleDetailsFragment
@@ -20,12 +20,15 @@ import com.example.news.util.OnTryAgainClickListener
 import com.example.news.util.TabPreferences
 import com.example.news.util.showAlertDialog
 import com.google.android.material.tabs.TabLayout
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class ArticlesFragment : Fragment() {
 
     private lateinit var binding: FragmentArticlesBinding
-    private val adapter = ArticlesAdapter()
+    @Inject
+    lateinit var adapter: ArticlesAdapter
     private lateinit var viewModel: ArticlesViewModel
     private lateinit var tabPreferences: TabPreferences
 

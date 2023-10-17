@@ -12,15 +12,17 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.news.R
-import com.example.news.api.articlesModel.Article
+import com.example.news.data.api.articlesModel.Article
 import com.example.news.databinding.FragmentSearchBinding
 import com.example.news.ui.home.MainActivity
 import com.example.news.ui.home.articleDetails.ArticleDetailsFragment
-import com.example.news.ui.home.articles.ArticlesAdapter
+import com.example.news.ui.home.news.ArticlesAdapter
 import com.example.news.util.Constants
 import com.example.news.util.OnTryAgainClickListener
 import com.example.news.util.showAlertDialog
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SearchFragment : Fragment() {
     private lateinit var binding: FragmentSearchBinding
     private val adapter = ArticlesAdapter()

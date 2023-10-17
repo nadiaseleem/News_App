@@ -1,9 +1,9 @@
-package com.example.news.ui.home.articles
+package com.example.news.ui.home.news
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.news.api.articlesModel.Article
+import com.example.news.data.api.articlesModel.Article
 import com.example.news.databinding.ItemArticleBinding
 
 class ArticlesAdapter(var articles: List<Article>? = null) :

@@ -13,8 +13,9 @@ import com.example.news.ui.home.search.SearchFragment
 import com.example.news.ui.home.settings.SettingsFragment
 import com.example.news.util.Constants
 import com.google.android.material.navigation.NavigationView
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     lateinit var binding: ActivityMainBinding

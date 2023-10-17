@@ -9,7 +9,7 @@
 
         <variable
             name="vm"
-            type="com.example.news.ui.home.articles.ArticlesViewModel" />
+            type="com.example.news.ui.home.news.ArticlesViewModel" />
 
     </data>
 
@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/pattern_bg"
-        tools:context=".ui.home.articles.ArticlesFragment">
+        tools:context=".ui.home.news.ArticlesFragment">
 
         <ProgressBar
             android:id="@+id/progress_bar"

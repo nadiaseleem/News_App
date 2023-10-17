@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.example.news.R
-import com.example.news.api.articlesModel.Article
+import com.example.news.data.api.articlesModel.Article
 import com.example.news.databinding.FragmentArticleDetailsBinding
 import com.example.news.ui.home.MainActivity
 import com.example.news.util.Constants

@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import com.example.news.R
 import com.example.news.databinding.FragmentCategoriesBinding
 import com.example.news.ui.home.MainActivity
-import com.example.news.ui.home.articles.ArticlesFragment
+import com.example.news.ui.home.news.ArticlesFragment
 import com.example.news.util.Constants
 
 

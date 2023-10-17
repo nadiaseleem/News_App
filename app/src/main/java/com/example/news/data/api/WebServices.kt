@@ -1,22 +1,21 @@
-package com.example.news.api
+package com.example.news.data.api
 
-import com.example.news.api.articlesModel.ArticlesResponse
-import com.example.news.api.sourcesModel.SourcesResponse
-import retrofit2.Call
+import com.example.news.data.api.articlesModel.ArticlesResponse
+import com.example.news.data.api.sourcesModel.SourcesResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface WebServices {
     @GET("/v2/top-headlines/sources")
-    fun getSources(
+    suspend fun getSources(
         @Query("apiKey") apiKey: String = ApiConstants.API_KEY,
         @Query("category") category: String
-    ): Call<SourcesResponse>
+    ): SourcesResponse
 
     @GET("/v2/everything")
-    fun getArticles(
+    suspend fun getArticles(
         @Query("apiKey") apiKey: String = ApiConstants.API_KEY,
         @Query("q") searchKeyWord: String? = null,
         @Query("sources") source: String? = null
-    ): Call<ArticlesResponse>
+    ): ArticlesResponse
 }
